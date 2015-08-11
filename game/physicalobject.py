@@ -17,6 +17,7 @@ class PhysicalObject(Sprite):
 
         self.dead = False
         self.new_objects = []
+        self.new_particles = []
 
         self.event_handlers = []
 

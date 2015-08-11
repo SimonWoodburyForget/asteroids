@@ -9,7 +9,6 @@ from . import resources
 from . import physicalobject
 from . import bullet
 
-
 class Player(physicalobject.PhysicalObject):
     """Physical player object"""
     def __init__(self,*args, **kwargs):

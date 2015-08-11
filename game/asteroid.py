@@ -2,6 +2,7 @@ import random
 
 from . import resources
 from . import physicalobject
+from . import particles
 
 class Asteroid(physicalobject.PhysicalObject):
 
@@ -22,16 +23,12 @@ class Asteroid(physicalobject.PhysicalObject):
             for i in range(num_asteroids):
 
                 new_asteroid = Asteroid(self.screen_bounds,
-                                    x=self.x, y=self.y, batch=self.batch
-                )
+                                    x=self.x, y=self.y, batch=self.batch)
                 new_asteroid.rotation = random.randint(0, 360)
-
                 new_asteroid.velocity_x = (
-                    random.random() * -70 + self.velocity_x
-                )
+                    random.random() * -70 + self.velocity_x)
                 new_asteroid.velocity_y = (
-                    random.random() * 70 - self.velocity_y
-                )
+                    random.random() * 70 - self.velocity_y)
                 new_asteroid.scale = self.scale * 0.5
 
                 self.new_objects.append(new_asteroid)
@@ -42,4 +39,9 @@ class Asteroid(physicalobject.PhysicalObject):
         self.rotation += self.rotation_speed * dt
 
     def delete(self):
+        vel = (self.x, self.y)
+        pos = (self.velocity_x, self.velocity_y)
+        dust = particles.Dust(self.batch)
         super().delete()
+        dust.spawn(pos, vel)
+        return dust

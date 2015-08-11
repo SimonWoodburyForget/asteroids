@@ -1,21 +1,49 @@
+import random
+
+
 # might not want to load sprites here
-# from . import resources
+from pyglet.sprite import Sprite
+from . import resources
 
-class Particles:
-    '''Base class for all particles'''
-    # particles x, y
-    # particles velocity x, y
 
-    # particles container to be pre loaded
-        # (-1, - 1 to be impossible for the screen to load?)
-        # randomly generated inside of an area
-    # particles container to moved/updated to be used
-        # velocity added and randomly diviated for each particles
 
-# might be moved into asteroid.py later
-class Dust(Particles):
+
+
+
+class Particle(Sprite):
+    '''Base class for a particle'''
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.velovity_x = 0
+        self.velocity_y = 0
+        self.rotation_speed = random.random() * 70
+
+    def update(self, dt):
+        self.x += self.velocity_x * dt
+        self.y += self.velocity_y * dt
+        self.rotation += self.rotation_speed * dt
+        return self
+
+class Dust():
     '''Particles to be tied with asteroids'''
-    # dust sprites
-    # particles dencity
-    # particles spawn's
-    # particles velocity's
+    def __init__(self, batch):
+        self.batch = batch
+        self.particles = []
+
+    def spawn(self, pos, vel, qty=3):
+        self.particles = []
+        for count in range(qty):
+
+            particle = Particle(img=random.choice(resources.asteroid_particles),
+                                batch=self.batch)
+            particle.x = pos[0]
+            particle.y = pos[1]
+            particle.velocity_x = vel[0]
+            particle.velocity_y = vel[1]
+
+            self.particles.append(particle)
+        return self.particles
+
+    def update(self, dt):
+        for particle in self.particles:
+            particle.update(dt)
