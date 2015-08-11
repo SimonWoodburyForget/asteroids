@@ -144,5 +144,6 @@ class Player(physicalobject.PhysicalObject):
 
     def delete(self):
         self.engine_sprite.delete()
+        self.engine_player.delete()
         self.invul_sprite.delete()
         super().delete()

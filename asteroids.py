@@ -18,6 +18,10 @@ from game import player
 from game import load
 from game import guiobject
 
+# To make everything but bullets make explosions sounds
+from game.resources import explosion_sound
+from game.bullet import Bullet
+
 from game.asteroid import Asteroid
 
 screen_width = 1366
@@ -43,6 +47,8 @@ class GameWindow(pyglet.window.Window):
 
         self.hud = guiobject.HudObjects(self.screen_size, self.gui_batch)
         self.push_handlers(self.hud)
+
+        self.explosion_sound = explosion_sound
 
         self.game_over = guiobject.Selection(
             'GameOver',
@@ -181,6 +187,8 @@ class GameWindow(pyglet.window.Window):
                 """Removing object"""
                 to_remove.delete()
                 self.physical_objects.remove(to_remove)
+                if not isinstance(to_remove, Bullet):
+                    self.explosion_sound.play()
 
             """Adding requested objects"""
             self.physical_objects.extend(to_add)
