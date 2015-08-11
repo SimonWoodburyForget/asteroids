@@ -39,7 +39,7 @@ class HudObjects:
 
     @lives.setter
     def lives(self, lives):
-        for _ in range(lives):
+        for _ in range(lives+1):
             if len(self._player_lives) > lives:
                 life = self._player_lives.pop()
                 life.delete()
