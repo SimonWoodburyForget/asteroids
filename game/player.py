@@ -22,7 +22,8 @@ class Player(physicalobject.PhysicalObject):
         self.invul_sprite.scale += 1.15
         self.invul_sprite.visible = False
 
-        self.thrust = 300.0
+        self.thrust = 100.0
+        self.recoil = 100.0
         self.rotation_speed = 100.0
 
         self.ship_radius = self.image.width/2
@@ -75,18 +76,24 @@ class Player(physicalobject.PhysicalObject):
 
         if self.key_handler[key.SPACE]:
             # fires has long has space is held
-            self.fire()
+            self.fire(dt)
 
-    def set_invulnerable(self, dt=5):
+    def set_invulnerable(self, t=5):
         self.invulnerable = True
-        pyglet.clock.schedule_once(self.set_vulnerable, dt)
+        pyglet.clock.schedule_once(self.set_vulnerable, t)
 
-    def set_vulnerable(self, dt):
+    def set_vulnerable(self, t):
         self.invulnerable = False
 
-    def fire(self):
+    def fire(self, dt):
         # fires only if loaded
         if self.loaded:
+            angle_radians = -math.radians(self.rotation)
+            force_x = math.cos(angle_radians) * self.recoil * dt
+            force_y = math.sin(angle_radians) * self.recoil * dt
+            self.velocity_x -= force_x
+            self.velocity_y -= force_y
+
             angle_radians = -math.radians(self.rotation)
 
             ship_radius = self.ship_radius

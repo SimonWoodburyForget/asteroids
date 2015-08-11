@@ -25,7 +25,7 @@ screen_height = 768
 FPS = 120.0
 
 def main():
-    game = GameWindow(screen_width, screen_height)
+    game = GameWindow(screen_width, screen_height, resizable=True)
     pyglet.clock.schedule_interval(game.update, 1/FPS)
     pyglet.app.run()
 
@@ -42,19 +42,19 @@ class GameWindow(pyglet.window.Window):
         self.gui_batch = pyglet.graphics.Batch()
 
         self.hud = guiobject.HudObjects(self.screen_size, self.gui_batch)
+        self.push_handlers(self.hud)
 
         self.game_over = guiobject.Selection(
             'GameOver',
-            x=self.width/2,
-            y=self.height/2,
+            self.screen_size,
             batch=self.gui_batch)
         self.game_over.insert('Restart', self.reset_game)
+        self.game_over.insert('Exit', exit)
         self.push_handlers(self.game_over)
 
         self.menu = guiobject.Selection(
             'Menu',
-            x=self.width/2,
-            y=self.height/2,
+            self.screen_size,
             batch=self.gui_batch)
         self.menu.insert('Restart', self.reset_game)
         self.menu.insert('Exit', exit)
@@ -85,12 +85,16 @@ class GameWindow(pyglet.window.Window):
         self._spawn += 1
         self.hud.spawn = self._spawn
         for i in range(self._spawn * 3):
-            self.physical_objects += load.asteroids(
+            asteroids = load.asteroids(
                 self.num_asteroids,
                 self.player_ship.position,
                 (self.width, self.height),
                 batch=self.game_batch
             )
+            self.event_stack_size += len([self.push_handlers(x) for x
+                                                                in asteroids])
+            self.physical_objects += asteroids
+        self.spawn_condition += 1
 
 
     def reset_game(self):
@@ -103,13 +107,13 @@ class GameWindow(pyglet.window.Window):
         for obj in self.physical_objects:
             obj.delete()
 
-
+        self.spawn_condition = 3
         self.asteroids_remaining = 0
+        self._lives = 3
         self._score = 0
         self._spawn = 0
 
-        for life in self.player_lives:
-            life.delete()
+        self.hud.lives = self._lives
 
         self.physical_objects = []
 
@@ -119,11 +123,6 @@ class GameWindow(pyglet.window.Window):
             x=self.width/2,
             y=self.height/2,
             batch=self.game_batch
-        )
-        self.player_lives = load.player_lives(
-            (self.width, self.height),
-            self.lives,
-            self.game_batch
         )
         self.physical_objects.append(self.player_ship)
         # load game evnet handlers
@@ -135,6 +134,7 @@ class GameWindow(pyglet.window.Window):
     def update(self, dt):
 
         # game Hud/label objects
+
 
         # game physics/mechanics
         if not self.menu.visible:
@@ -150,7 +150,7 @@ class GameWindow(pyglet.window.Window):
                             obj_2.handle_collision_with(obj_1)
 
             """Spawning more asteroids"""
-            if self.asteroids_remaining < 3:
+            if self.asteroids_remaining < self.spawn_condition:
                 self.next_spawn()
 
             """Checking requests to_add objects"""
@@ -162,9 +162,9 @@ class GameWindow(pyglet.window.Window):
 
             """Checking players life state"""
             if self.player_ship.dead:
-                if self.player_lives:
-                    life = self.player_lives.pop()
-                    life.delete()
+                if self._lives:
+                    self._lives -= 1
+                    self.hud.lives = self._lives
                     self.player_ship.dead = False
                     self.player_ship.set_invulnerable()
                 else:
@@ -195,6 +195,7 @@ class GameWindow(pyglet.window.Window):
                 """Checking for spawn conditions"""
                 if isinstance(obj, Asteroid):
                     self.asteroids_remaining += 1
+
 
 
     def on_key_press(self, symbol, modifiers):

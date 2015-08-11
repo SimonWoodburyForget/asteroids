@@ -1,3 +1,4 @@
+import pyglet
 from pyglet.text import Label
 from pyglet.sprite import Sprite
 from pyglet.graphics import OrderedGroup
@@ -17,6 +18,8 @@ class HudObjects:
         self.screen_size = screen_size
         self.batch = batch
 
+        self._player_lives = []
+
         self._score_label = Label(batch=self.batch)
         self._score_text = 'Score: {}'
         self._score = 0
@@ -27,8 +30,28 @@ class HudObjects:
         self._spawn = 0
 
     @property
+    def lives(self):
+        for c, i in enumerate(self._player_lives):
+            i.x = self.width - 25 - c * 30
+            i.y = self.height - 25
+
+        return self._player_lives
+
+    @lives.setter
+    def lives(self, lives):
+        for _ in range(lives):
+            if len(self._player_lives) > lives:
+                life = self._player_lives.pop()
+                life.delete()
+            elif len(self._player_lives) < lives:
+                life = pyglet.sprite.Sprite(img=resources.player_image,
+                                                    batch=self.batch)
+                life.scale = 0.5
+                self._player_lives.append(life)
+        return self.lives
+
+    @property
     def score(self):
-        '''To always returns the right label for it's local screen size'''
         text = self._score_text.format(self._score)
         self._score_label.text = text
         self._score_label.x = 10
@@ -37,13 +60,11 @@ class HudObjects:
 
     @score.setter
     def score(self, score):
-        '''Setting score locally has an int'''
         self._score = score
         return self.score
 
     @property
     def spawn(self):
-        '''To always returns the right label for it's local screen size'''
         text = self._spawn_text.format(self._spawn)
         self._spawn_label.text = text
         self._spawn_label.x = self.width / 2
@@ -52,7 +73,6 @@ class HudObjects:
 
     @spawn.setter
     def spawn(self, spawn):
-        '''Setting spawn locally has an int'''
         self._spawn = spawn
         return self.spawn
 
@@ -72,11 +92,20 @@ class HudObjects:
     def height(self):
         self.screen_size = (self.width, value)
 
+    def on_resize(self, width, height):
+        self.screen_size = (width, height)
+        self.score
+        self.spawn
+        self.lives
+
+
 
 class Selection(Sprite):
     """Basic class to create menu, with buttons, and functions when pressed"""
-    def __init__(self, name, *args, **kwargs):
-        super().__init__(img=menu_background,
+    def __init__(self, name, screen_size, *args, **kwargs):
+        x = screen_size[0]/2
+        y = screen_size[1]/2
+        super().__init__(img=menu_background, x=x, y=y,
             group=OrderedGroup(0), *args, **kwargs)
         self.name = name
         self.visible = False
@@ -87,19 +116,33 @@ class Selection(Sprite):
         self.selector = 0
 
         self.name_label = Label(
-            x=self.x,
-            y=self.y + self.image.height/2 - 30,
             anchor_x='center',
             batch=self.batch,
             group=OrderedGroup(1)
         )
+        self._position_name
+
+    def on_resize(self, width, height):
+        self.x = width/2
+        self.y = height/2
+
+        self._position_name()
+        self._position_buttons()
+
+    def _position_name(self):
+        self.name_label.x = self.x
+        self.name_label.y = self.y + self.image.height/2 - 30
+
+    def _position_buttons(self):
+        _x = self.x
+        _y = self.y + self.image.height/2 - 70
+        for count, button in enumerate(self.buttons):
+            button.x = _x
+            button.y = _y - count * 20
 
 
     def insert(self, name, call):
         button = Label(
-            x=self.x,
-            y=(self.y + self.image.height/2 - 70
-                - (len(self.names) * 20)),
             anchor_x='center',
             batch=self.batch,
             group=OrderedGroup(1)
@@ -107,6 +150,8 @@ class Selection(Sprite):
         self.names.append(name)
         self.buttons.append(button)
         self.calls.append(call)
+
+        self._position_buttons()
 
 
     def set_visible(self):
