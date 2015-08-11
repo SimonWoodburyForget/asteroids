@@ -13,6 +13,7 @@ class Asteroid(physicalobject.PhysicalObject):
         self.rotation_speed = random.random() * 70
         self.score_dif = 10
 
+
     def handle_collision_with(self, other_object):
         super().handle_collision_with(other_object)
 
@@ -39,3 +40,6 @@ class Asteroid(physicalobject.PhysicalObject):
     def update(self, dt):
         super().update(dt)
         self.rotation += self.rotation_speed * dt
+
+    def delete(self):
+        super().delete()

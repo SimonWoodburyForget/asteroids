@@ -27,6 +27,9 @@ class PhysicalObject(Sprite):
         self.y += self.velocity_y * dt
         self.check_bounds()
 
+    def on_resize(self, width, height):
+        self.screen_bounds = (width, height)
+        self.check_bounds()
 
     def check_bounds(self):
         min_x = -self.image.width/2
