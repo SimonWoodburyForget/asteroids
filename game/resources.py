@@ -27,3 +27,6 @@ center_image(bullet_image)
 asteroids = ["asteroid" + str(i) + ".png" for i in range(0, 4)]
 asteroid_images = [pyglet.resource.image(i) for i in asteroids]
 center_image(asteroid_images)
+
+explosion_sound = pyglet.resource.media("explosion.wav", streaming=False)
+explosion_sound

@@ -3,6 +3,8 @@ import random
 from . import resources
 from . import physicalobject
 
+import pyglet
+
 class Asteroid(physicalobject.PhysicalObject):
 
     def __init__(self, *args, **kwargs):
@@ -12,6 +14,9 @@ class Asteroid(physicalobject.PhysicalObject):
         self.scale *= 1.0
         self.rotation_speed = random.random() * 70
         self.score_dif = 10
+
+        self.explosion_sound = resources.explosion_sound
+        self.explosion_sound
 
     def handle_collision_with(self, other_object):
         super().handle_collision_with(other_object)
@@ -39,3 +44,7 @@ class Asteroid(physicalobject.PhysicalObject):
     def update(self, dt):
         super().update(dt)
         self.rotation += self.rotation_speed * dt
+
+    def delete(self):
+        super().delete()
+        self.explosion_sound.play()
