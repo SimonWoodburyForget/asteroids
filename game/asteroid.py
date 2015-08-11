@@ -3,8 +3,6 @@ import random
 from . import resources
 from . import physicalobject
 
-import pyglet
-
 class Asteroid(physicalobject.PhysicalObject):
 
     def __init__(self, *args, **kwargs):

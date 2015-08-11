@@ -11,11 +11,13 @@ center_image(menu_background)
 player_image = pyglet.resource.image("player.png")
 center_image(player_image)
 
+engine_sound = pyglet.resource.media("rocket_effect.wav", streaming=False)
 engine_image = pyglet.resource.image("engine_flame.png")
 # anchoring at a position behind the player slightly
 engine_image.anchor_x = engine_image.width * 1.5
 engine_image.anchor_y = engine_image.height / 2
 
+shield_sound = pyglet.resource.media("energy_wip.wav", streaming=False)
 shield_image = pyglet.resource.image("shield.png")
 center_image(shield_image)
 
@@ -29,4 +31,3 @@ asteroid_images = [pyglet.resource.image(i) for i in asteroids]
 center_image(asteroid_images)
 
 explosion_sound = pyglet.resource.media("explosion.wav", streaming=False)
-explosion_sound

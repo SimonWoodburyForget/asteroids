@@ -18,9 +18,18 @@ class Player(physicalobject.PhysicalObject):
         self.engine_sprite = Sprite(img=resources.engine_image, *args, **kwargs)
         self.engine_sprite.visible = False
 
+        self.engine_sound = resources.engine_sound
+        self.engine_player = pyglet.media.Player()
+        self.engine_player.queue(self.engine_sound)
+        self.engine_player.volume = 0
+        self.engine_player.eos_action = pyglet.media.Player.EOS_LOOP
+
+
         self.invul_sprite = Sprite(img=resources.shield_image, *args, **kwargs)
         self.invul_sprite.scale += 1.15
         self.invul_sprite.visible = False
+        self.shield_sound = resources.shield_sound
+
 
         self.thrust = 100.0
         self.recoil = 100.0
@@ -37,6 +46,7 @@ class Player(physicalobject.PhysicalObject):
         self.bullet_speed = 750.0
         self.bullet_sound = resources.bullet_sound
         self.loaded = True
+
 
     def update(self, dt):
         super().update(dt)
@@ -64,8 +74,15 @@ class Player(physicalobject.PhysicalObject):
             self.engine_sprite.y = self.y
             self.engine_sprite.visible = True
 
+            self.engine_player.play()
+            if self.engine_player.volume < 1.5:
+                self.engine_player.volume += 1.2 * dt
         else:
             self.engine_sprite.visible = False
+            if self.engine_player.volume > 0.01:
+                self.engine_player.volume -= 1.5 * dt
+            else:
+                self.engine_player.pause()
 
         if self.invulnerable:
             self.invul_sprite.x = self.x
@@ -79,6 +96,7 @@ class Player(physicalobject.PhysicalObject):
             self.fire(dt)
 
     def set_invulnerable(self, t=5):
+        self.shield_sound.play()
         self.invulnerable = True
         pyglet.clock.schedule_once(self.set_vulnerable, t)
 
