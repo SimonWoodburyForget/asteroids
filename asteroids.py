@@ -71,8 +71,8 @@ class GameWindow(pyglet.window.Window):
         #self.player_lives = load.player_lives(self.lives, self.gui_batch)
 
         self.game_batch = pyglet.graphics.Batch()
-        self.event_stack_size = 0
         self.physical_objects = []
+        self.event_stack_size = 0
 
         self.reset_game()
 
@@ -122,6 +122,7 @@ class GameWindow(pyglet.window.Window):
         self.hud.lives = self._lives
 
         self.physical_objects = []
+        self.particles = []
 
         self.player_ship = player.Player(
             screen_size=(self.width,
@@ -166,6 +167,8 @@ class GameWindow(pyglet.window.Window):
                 to_add.extend(obj.new_objects)
                 obj.new_objects = []
 
+                self.particles += obj.new_particles
+
             """Checking players life state"""
             if self.player_ship.dead:
                 if self._lives:
@@ -203,6 +206,9 @@ class GameWindow(pyglet.window.Window):
                 """Checking for spawn conditions"""
                 if isinstance(obj, Asteroid):
                     self.asteroids_remaining += 1
+
+            for part in self.particles:
+                part.update(dt)
 
 
 

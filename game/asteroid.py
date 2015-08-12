@@ -18,6 +18,14 @@ class Asteroid(physicalobject.PhysicalObject):
     def handle_collision_with(self, other_object):
         super().handle_collision_with(other_object)
 
+        self.new_particles = []
+        if self.dead:
+            self.rocks = particles.Rocks(self.screen_size, self.batch)
+            vel = (other_object.velocity_x, other_object.velocity_y)
+            pos = (self.x, self.y)
+            self.rocks.spawn(pos, vel, self.scale)
+            self.new_particles.append(self.rocks)
+
         if self.dead and self.scale > 0.25:
             num_asteroids = random.randint(2, 3)
             for i in range(num_asteroids):
@@ -32,6 +40,7 @@ class Asteroid(physicalobject.PhysicalObject):
                 new_asteroid.scale = self.scale * 0.5
 
                 self.new_objects.append(new_asteroid)
+
 
 
     def update(self, dt):

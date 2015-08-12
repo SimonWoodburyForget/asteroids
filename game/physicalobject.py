@@ -29,7 +29,7 @@ class PhysicalObject(Sprite):
         self.check_bounds()
 
     def on_resize(self, width, height):
-        self.screen_bounds = (width, height)
+        self.screen_size = (width, height)
         self.check_bounds()
 
     def check_bounds(self):
@@ -65,7 +65,7 @@ class PhysicalObject(Sprite):
     def handle_collision_with(self, other_object):
         if type(self) == type(other_object):
             self.dead = False
-        elif self.invulnerable or other_object.invulnerable:
+        elif self.invulnerable:
             self.dead = False
         else:
             self.dead = True

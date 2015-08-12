@@ -7,9 +7,6 @@ from . import resources
 import pyglet
 
 
-
-
-
 class Particle(Sprite):
     '''Base class for a particle'''
     def __init__(self, *args, **kwargs):
@@ -18,12 +15,14 @@ class Particle(Sprite):
         self.velocity_y = 0
         self.rotation_speed = random.random() * 70
         self.dead = False
+        self.life_time = 10
 
     def update(self, dt):
         self.x += self.velocity_x * dt
         self.y += self.velocity_y * dt
         self.rotation += self.rotation_speed * dt
         self.check_bounds()
+        self.life_time += dt
 
     def check_bounds(self):
         min_x = -self.image.width/2
@@ -54,17 +53,18 @@ class Rocks():
         #pyglet.clock.schedule_once(self._re, 6)
 
 
-    def spawn(self, pos, vel, qty=3):
+    def spawn(self, pos, vel, scale, qty=10):
 
         for count in range(qty):
 
             particle = Particle(img=random.choice(resources.asteroid_particles),
                                 batch=self.batch)
-            particle.x = pos[0] + random.random() * 50
-            particle.y = pos[1] + random.random() * 50
-            particle.velocity_x = vel[0] + random.random() * 50
-            particle.velocity_y = vel[1] + random.random() * 50
+            particle.x = pos[0] - random.random() * 50.0 * scale
+            particle.y = pos[1] - random.random() * 50.0 * scale
+            particle.velocity_x = vel[0] * random.random() * 2
+            particle.velocity_y = vel[1] * random.random() * 2
             particle.screen_size = self.screen_size
+            particle.scale = 0.40
 
             self.particles.append(particle)
 
