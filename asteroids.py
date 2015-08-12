@@ -42,7 +42,6 @@ class GameWindow(pyglet.window.Window):
         super().__init__(*args, **kwargs)
 
         self._spawn = 0
-        self.num_asteroids = 1
 
         self.gui_batch = pyglet.graphics.Batch()
 
@@ -67,7 +66,7 @@ class GameWindow(pyglet.window.Window):
         self.menu.insert('Exit', exit)
         self.push_handlers(self.menu)
 
-        self.lives = 3
+        self.lives = 4
         self.player_lives = []
         #self.player_lives = load.player_lives(self.lives, self.gui_batch)
 
@@ -88,21 +87,25 @@ class GameWindow(pyglet.window.Window):
 
 
     def next_spawn(self):
-        # FIXME: Unfuck this... mess
         """spawn next wave adding dificulty and keeping the game going"""
         self._spawn += 1
         self.hud.spawn = self._spawn
-        for i in range(self._spawn * 3):
-            asteroids = load.asteroids(
-                self.num_asteroids,
-                self.player_ship.position,
-                (self.width, self.height),
-                batch=self.game_batch
-            )
-            self.event_stack_size += len([self.push_handlers(x) for x
-                                                                in asteroids])
-            self.physical_objects += asteroids
-        self.spawn_condition += 1
+
+        # lets use fibonacci
+        a, b = 0, 1
+        for i in range(0, self._spawn):
+            a, b = b, a + b
+        num_asteroids = a
+
+        asteroids = load.asteroids(
+            num_asteroids,
+            self.player_ship.position,
+            (self.width, self.height),
+            batch=self.game_batch)
+        self.event_stack_size += len([self.push_handlers(x) for x in asteroids])
+
+        self.physical_objects += asteroids
+        self.spawn_condition = 1
 
 
     def reset_game(self):
