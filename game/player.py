@@ -73,6 +73,7 @@ class Player(physicalobject.PhysicalObject):
             self.engine_sprite.y = self.y
             self.engine_sprite.visible = True
 
+            # engine sound fading mechanic
             self.engine_player.play()
             if self.engine_player.volume < 1.5:
                 self.engine_player.volume += 1.2 * dt
@@ -82,6 +83,7 @@ class Player(physicalobject.PhysicalObject):
                 self.engine_player.volume -= 1.5 * dt
             else:
                 self.engine_player.pause()
+
 
         if self.invulnerable:
             self.invul_sprite.x = self.x

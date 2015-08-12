@@ -87,6 +87,7 @@ class GameWindow(pyglet.window.Window):
 
 
     def next_spawn(self):
+        # FIXME: Unfuck this... mess
         """spawn next wave adding dificulty and keeping the game going"""
         self._spawn += 1
         self.hud.spawn = self._spawn
@@ -139,9 +140,6 @@ class GameWindow(pyglet.window.Window):
                 self.event_stack_size += 1
 
     def update(self, dt):
-
-        # game Hud/label objects
-
 
         # game physics/mechanics
         if not self.menu.visible:

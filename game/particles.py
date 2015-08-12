@@ -14,17 +14,22 @@ class Particle(Sprite):
         self.velovity_x = 0
         self.velocity_y = 0
         self.rotation_speed = random.random() * 70
+
+        # seconds
+        self.life_time = 15
         self.dead = False
-        self.life_time = 10
 
     def update(self, dt):
         self.x += self.velocity_x * dt
         self.y += self.velocity_y * dt
         self.rotation += self.rotation_speed * dt
         self.check_bounds()
-        self.life_time += dt
+        
+        self.life_time -= dt
+        if self.life_time < 0: self.dead = True
 
     def check_bounds(self):
+        '''Making particle die off screen'''
         min_x = -self.image.width/2
         min_y = -self.image.height/2
 
@@ -47,11 +52,6 @@ class Rocks():
         self.batch = batch
         self.particles = []
 
-    #    self._re()
-
-    #def _re(self):
-        #pyglet.clock.schedule_once(self._re, 6)
-
 
     def spawn(self, pos, vel, scale, qty=10):
 
@@ -59,10 +59,15 @@ class Rocks():
 
             particle = Particle(img=random.choice(resources.asteroid_particles),
                                 batch=self.batch)
+
+            # spawn area, scale used to change per size of asteroids
             particle.x = pos[0] - random.random() * 50.0 * scale
             particle.y = pos[1] - random.random() * 50.0 * scale
+
+            # takes the velocity of other object * 2 to get off screen faster
             particle.velocity_x = vel[0] * random.random() * 2
             particle.velocity_y = vel[1] * random.random() * 2
+
             particle.screen_size = self.screen_size
             particle.scale = 0.40
 

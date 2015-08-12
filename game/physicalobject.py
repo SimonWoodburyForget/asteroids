@@ -16,12 +16,12 @@ class PhysicalObject(Sprite):
         self.is_bullet = False
 
         self.dead = False
+        self.invulnerable = False
+
         self.new_objects = []
         self.new_particles = []
 
         self.event_handlers = []
-
-        self.invulnerable = False
 
     def update(self, dt):
         self.x += self.velocity_x * dt
