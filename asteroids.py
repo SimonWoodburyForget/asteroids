@@ -23,7 +23,6 @@ from game.resources import explosion_sound
 from game.bullet import Bullet
 
 from game.asteroid import Asteroid
-from game import particles
 
 screen_width = 1366
 screen_height = 768
@@ -186,13 +185,10 @@ class GameWindow(pyglet.window.Window):
                 self.hud.score = self._score
 
                 """Removing object"""
+                to_remove.delete()
+                self.physical_objects.remove(to_remove)
                 if not isinstance(to_remove, Bullet):
                     self.explosion_sound.play()
-                self.particles = to_remove.delete()
-                if self.particles != None:
-                    for particle in self.particles.particles:
-                        particle.update(dt)
-                self.physical_objects.remove(to_remove)
 
             """Adding requested objects"""
             self.physical_objects.extend(to_add)

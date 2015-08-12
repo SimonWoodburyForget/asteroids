@@ -22,7 +22,7 @@ class Particle(Sprite):
         self.x += self.velocity_x * dt
         self.y += self.velocity_y * dt
         self.rotation += self.rotation_speed * dt
-        return self
+
 
 class Dust():
     '''Particles to be tied with asteroids'''
@@ -31,18 +31,18 @@ class Dust():
         self.particles = []
 
     def spawn(self, pos, vel, qty=3):
-        self.particles = []
+
         for count in range(qty):
 
             particle = Particle(img=random.choice(resources.asteroid_particles),
                                 batch=self.batch)
-            particle.x = pos[0]
-            particle.y = pos[1]
-            particle.velocity_x = vel[0]
-            particle.velocity_y = vel[1]
+            particle.x = pos[0] + random.random()
+            particle.y = pos[1] + random.random()
+            particle.velocity_x = vel[0] + random.random()
+            particle.velocity_y = vel[1] + random.random()
 
             self.particles.append(particle)
-        return self.particles
+
 
     def update(self, dt):
         for particle in self.particles:
