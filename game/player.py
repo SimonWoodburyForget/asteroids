@@ -9,12 +9,11 @@ from . import resources
 from . import physicalobject
 from . import bullet
 
-
 class Player(physicalobject.PhysicalObject):
     """Physical player object"""
     def __init__(self,*args, **kwargs):
         super().__init__(img=resources.player_image, *args, **kwargs)
-        del kwargs['screen_bounds']
+        del kwargs['screen_size']
         self.engine_sprite = Sprite(img=resources.engine_image, *args, **kwargs)
         self.engine_sprite.visible = False
 
@@ -74,6 +73,7 @@ class Player(physicalobject.PhysicalObject):
             self.engine_sprite.y = self.y
             self.engine_sprite.visible = True
 
+            # engine sound fading mechanic
             self.engine_player.play()
             if self.engine_player.volume < 1.5:
                 self.engine_player.volume += 1.2 * dt
@@ -83,6 +83,7 @@ class Player(physicalobject.PhysicalObject):
                 self.engine_player.volume -= 1.5 * dt
             else:
                 self.engine_player.pause()
+
 
         if self.invulnerable:
             self.invul_sprite.x = self.x
@@ -117,7 +118,7 @@ class Player(physicalobject.PhysicalObject):
             ship_radius = self.ship_radius
             bullet_x = self.x + math.cos(angle_radians) * ship_radius
             bullet_y = self.y + math.sin(angle_radians) * ship_radius
-            new_bullet = bullet.Bullet(screen_bounds=self.screen_bounds,
+            new_bullet = bullet.Bullet(screen_size=self.screen_size,
                                 x=bullet_x, y=bullet_y, batch=self.batch)
 
             bullet_vx = (self.velocity_x +

@@ -22,7 +22,7 @@ def asteroids(num_asteroids, player_position, screen_size, batch):
             asteroid_x = random.randint(0, screen_size[0])
             asteroid_y = random.randint(0, screen_size[1])
 
-        new_asteroid = asteroid.Asteroid(screen_bounds=screen_size,
+        new_asteroid = asteroid.Asteroid(screen_size=screen_size,
                                     x=asteroid_x, y=asteroid_y, batch=batch)
         new_asteroid.rotation = random.randint(0, 360)
         new_asteroid.velocity_x = random.random() * 40
