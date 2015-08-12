@@ -24,6 +24,7 @@ from game.bullet import Bullet
 
 from game.asteroid import Asteroid
 
+
 screen_width = 1366
 screen_height = 768
 FPS = 120.0

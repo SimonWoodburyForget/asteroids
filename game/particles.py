@@ -16,7 +16,7 @@ class Particle(Sprite):
         self.rotation_speed = random.random() * 70
 
         # seconds
-        self.life_time = 15
+        self.life_time = random.random() * 25
         self.dead = False
 
     def update(self, dt):
@@ -24,7 +24,7 @@ class Particle(Sprite):
         self.y += self.velocity_y * dt
         self.rotation += self.rotation_speed * dt
         self.check_bounds()
-        
+
         self.life_time -= dt
         if self.life_time < 0: self.dead = True
 
