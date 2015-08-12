@@ -61,6 +61,7 @@ class PhysicalObject(Sprite):
 
         return (actual_distance <= collision_distance)
 
+
     def handle_collision_with(self, other_object):
         if type(self) == type(other_object):
             self.dead = False
@@ -68,3 +69,5 @@ class PhysicalObject(Sprite):
             self.dead = False
         else:
             self.dead = True
+            self.velocity_x += other_object.velocity_x/25
+            self.velocity_y -= other_object.velocity_y/25

@@ -3,12 +3,12 @@ import pyglet
 
 
 from game import resources
-
+from game import particles
 window = pyglet.window.Window()
 x = window.width/2
 y = window.height/2
 
-
+'''
 class S(pyglet.sprite.Sprite):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -37,10 +37,10 @@ class C:
     def update(self, dt):
         for i in self.con:
             i.update(dt)
-
+'''
 main_batch = pyglet.graphics.Batch()
-contain_this = C(main_batch)
-contain_this.spawn(x, y)
+contain_this = particles.Rocks((x*2, y*2), main_batch)
+contain_this.spawn((x, y), (10,10))
 
 @window.event
 def on_draw():

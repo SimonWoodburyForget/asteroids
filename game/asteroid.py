@@ -19,6 +19,8 @@ class Asteroid(physicalobject.PhysicalObject):
         super().handle_collision_with(other_object)
 
         if self.dead and self.scale > 0.25:
+            self.velocity_x += other_object.velocity_x/11
+            self.velocity_y -= other_object.velocity_y/11
             num_asteroids = random.randint(2, 3)
             for i in range(num_asteroids):
 
@@ -39,9 +41,4 @@ class Asteroid(physicalobject.PhysicalObject):
         self.rotation += self.rotation_speed * dt
 
     def delete(self):
-        vel = (self.x, self.y)
-        pos = (self.velocity_x, self.velocity_y)
-        dust = particles.Dust(self.batch)
         super().delete()
-        dust.spawn(pos, vel)
-        return dust
