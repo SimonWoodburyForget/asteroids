@@ -124,7 +124,7 @@ class GameWindow(pyglet.window.Window):
         self.physical_objects = []
 
         self.player_ship = player.Player(
-            screen_bounds=(self.width,
+            screen_size=(self.width,
                         self.height),
             x=self.width/2,
             y=self.height/2,

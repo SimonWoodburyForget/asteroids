@@ -4,10 +4,10 @@ from . import util
 
 class PhysicalObject(Sprite):
 
-    def __init__(self, screen_bounds, *args, **kwargs):
+    def __init__(self, screen_size, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.screen_bounds = screen_bounds
+        self.screen_size = screen_size
 
         self.velocity_x = 0.0
         self.velocity_y = 0.0
@@ -36,8 +36,8 @@ class PhysicalObject(Sprite):
         min_x = -self.image.width/2
         min_y = -self.image.height/2
 
-        max_x = self.screen_bounds[0] + self.image.width/2
-        max_y = self.screen_bounds[1] + self.image.height/2
+        max_x = self.screen_size[0] + self.image.width/2
+        max_y = self.screen_size[1] + self.image.height/2
 
         if self.x < min_x:
             self.x = max_x

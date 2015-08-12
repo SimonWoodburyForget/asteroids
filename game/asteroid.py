@@ -19,12 +19,10 @@ class Asteroid(physicalobject.PhysicalObject):
         super().handle_collision_with(other_object)
 
         if self.dead and self.scale > 0.25:
-            self.velocity_x += other_object.velocity_x/11
-            self.velocity_y -= other_object.velocity_y/11
             num_asteroids = random.randint(2, 3)
             for i in range(num_asteroids):
 
-                new_asteroid = Asteroid(self.screen_bounds,
+                new_asteroid = Asteroid(self.screen_size,
                                     x=self.x, y=self.y, batch=self.batch)
                 new_asteroid.rotation = random.randint(0, 360)
                 new_asteroid.velocity_x = (
