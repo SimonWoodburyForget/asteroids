@@ -33,6 +33,8 @@ class Player(physicalobject.PhysicalObject):
         self.thrust = 100.0
         self.recoil = 100.0
         self.rotation_speed = 100.0
+        self.rotation_force = 100.0
+        self.rotation_resistance = 1
 
         self.ship_radius = self.image.width/2
 
@@ -50,15 +52,25 @@ class Player(physicalobject.PhysicalObject):
     def update(self, dt):
         super().update(dt)
 
+        left_force = 0
         if self.key_handler[key.LEFT]:
-            self.rotation -= self.rotation_speed * dt
+            left_force = self.rotation_force * dt
+
+            # prevents number overflow mainly
             if self.rotation < -360:
                 self.rotation += 360
 
+        self.rotation -= left_force
+
+        right_force = 0
         if self.key_handler[key.RIGHT]:
-            self.rotation += self.rotation_speed * dt
+            right_force = self.rotation_force * dt
+
+            # prevents number overflow mainly
             if self.rotation > 360:
                 self.rotation -= 360
+
+        self.rotation += right_force
 
 
         if self.key_handler[key.UP]:
@@ -73,9 +85,9 @@ class Player(physicalobject.PhysicalObject):
             self.engine_sprite.y = self.y
             self.engine_sprite.visible = True
 
-            # engine sound fading mechanic
+            # smooth sound==
             self.engine_player.play()
-            if self.engine_player.volume < 1.5:
+            if self.engine_player.volume < 1.8:
                 self.engine_player.volume += 1.2 * dt
         else:
             self.engine_sprite.visible = False
@@ -83,6 +95,7 @@ class Player(physicalobject.PhysicalObject):
                 self.engine_player.volume -= 1.5 * dt
             else:
                 self.engine_player.pause()
+            # ==============
 
 
         if self.invulnerable:
