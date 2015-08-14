@@ -31,10 +31,10 @@ class Player(physicalobject.PhysicalObject):
 
 
         self.thrust = 100.0
-        self.recoil = 100.0
-        self.rotation_speed = 100.0
-        self.rotation_force = 100.0
-        self.rotation_resistance = 1
+        self.recoil = 200.0
+        self.rotation_speed = 0
+        self.rotation_force = 2.0
+        self.rotation_resistance = 1.0
 
         self.ship_radius = self.image.width/2
 
@@ -52,25 +52,29 @@ class Player(physicalobject.PhysicalObject):
     def update(self, dt):
         super().update(dt)
 
-        left_force = 0
         if self.key_handler[key.LEFT]:
-            left_force = self.rotation_force * dt
+            self.rotation_speed -= self.rotation_force * dt
 
             # prevents number overflow mainly
             if self.rotation < -360:
                 self.rotation += 360
+        elif not self.key_handler[key.RIGHT]:
+            if self.rotation_speed < -0.01:
+                self.rotation_speed += self.rotation_resistance * dt
 
-        self.rotation -= left_force
-
-        right_force = 0
         if self.key_handler[key.RIGHT]:
-            right_force = self.rotation_force * dt
+            self.rotation_speed += self.rotation_force * dt
 
             # prevents number overflow mainly
             if self.rotation > 360:
                 self.rotation -= 360
+        elif not self.key_handler[key.LEFT]:
+            if self.rotation_speed > 0.01:
+                self.rotation_speed -= self.rotation_resistance * dt
 
-        self.rotation += right_force
+        self.rotation += self.rotation_speed
+
+
 
 
         if self.key_handler[key.UP]:
