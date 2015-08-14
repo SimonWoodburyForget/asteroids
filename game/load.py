@@ -1,5 +1,7 @@
 import random
 import math
+import json
+import time
 
 import pyglet
 from pyglet.graphics import OrderedGroup
@@ -45,3 +47,36 @@ def player_lives(screen_size, num_icons, batch):
         player_lives.append(new_sprite)
 
     return player_lives
+
+def scores(score=None):
+    """Reads, appends, and returns scores
+
+    Leaving no score argument will return current score
+    Entering score argument will return updated score
+
+    Doesn't save score if 0
+    """
+
+    with open('./data/score.json', 'r') as stream:
+        score_data = json.load(stream)
+
+    if score not in (0, None):
+        # adding score
+        data = {'score':score, 'date':time.time()}
+
+        if score_data:
+            # data exists
+            score_data.append(data)
+
+        else:
+            # data doesn't exist
+            score_data = [data]
+
+    if score_data:
+        with open('./data/score.json', 'w') as stream:
+            stream.write(json.dumps(score_data))
+        
+        return score_data
+
+    else:
+        return [{'date':0, 'score':0}]

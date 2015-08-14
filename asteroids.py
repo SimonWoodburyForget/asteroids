@@ -42,6 +42,7 @@ class GameWindow(pyglet.window.Window):
         super().__init__(*args, **kwargs)
 
         self._spawn = 0
+        self._score = 0
 
         self.gui_batch = pyglet.graphics.Batch()
 
@@ -110,6 +111,10 @@ class GameWindow(pyglet.window.Window):
 
     def reset_game(self):
 
+        _scores = load.scores(self._score)
+        self._top_score = sorted(_scores, key=lambda k: k['score'])[-1]['score']
+        self.hud.top_score = self._top_score
+
         # destroy gane objects
         while self.event_stack_size > 0:
             self.pop_handlers()
@@ -120,11 +125,14 @@ class GameWindow(pyglet.window.Window):
 
         self.spawn_condition = 3
         self.asteroids_remaining = 0
-        self._lives = 4
-        self._score = 0
-        self._spawn = 0
 
+        self._lives = 4
         self.hud.lives = self._lives
+        
+        self._score = 0
+        self.hud.score = self._score
+
+        self._spawn = 0
 
         self.physical_objects = []
         self.particles = []
@@ -181,6 +189,7 @@ class GameWindow(pyglet.window.Window):
                 else:
                     self.game_over.set_visible()
 
+
             """Removing requested to_remove objects"""
             for to_remove in [obj for obj
                                 in self.physical_objects
@@ -188,6 +197,9 @@ class GameWindow(pyglet.window.Window):
                 """Calculating Score (in/de)crement"""
                 self._score += to_remove.score_dif
                 self.hud.score = self._score
+                if self._score > self._top_score:
+                    self._top_score = self._score
+                    self.hud.top_score = self._top_score
 
                 """Removing object"""
                 to_remove.delete()
@@ -197,6 +209,7 @@ class GameWindow(pyglet.window.Window):
 
             """Adding requested objects"""
             self.physical_objects.extend(to_add)
+
 
             """Spawn conditions"""
             self.asteroids_remaining = 0

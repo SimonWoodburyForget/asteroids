@@ -24,10 +24,15 @@ class HudObjects:
         self._score_text = 'Score: {}'
         self._score = 0
 
+        self._top_score_label = Label(batch=self.batch)
+        self._top_score_text = 'Top Score: {}'
+        self._top_score = 0
+
         self._spawn_label = Label(batch=self.batch)
         self._spawn_label.anchor_x = 'center'
         self._spawn_text = 'Spawn: {}'
         self._spawn = 0
+
 
     @property
     def lives(self):
@@ -36,7 +41,6 @@ class HudObjects:
             i.y = self.height - 25
 
         return self._player_lives
-
     @lives.setter
     def lives(self, lives):
         for _ in range(lives+1):
@@ -50,6 +54,7 @@ class HudObjects:
                 self._player_lives.append(life)
         return self.lives
 
+
     @property
     def score(self):
         text = self._score_text.format(self._score)
@@ -57,11 +62,24 @@ class HudObjects:
         self._score_label.x = 10
         self._score_label.y = self.height - 25
         return self._score_label
-
     @score.setter
     def score(self, score):
         self._score = score
         return self.score
+
+
+    @property
+    def top_score(self):
+        text = self._top_score_text.format(self._top_score)
+        self._top_score_label.text = text
+        self._top_score_label.x = 10
+        self._top_score_label.y = self.height - 50
+        return self._top_score_label
+    @top_score.setter
+    def top_score(self, top_score):
+        self._top_score = top_score
+        return self.top_score
+
 
     @property
     def spawn(self):
@@ -70,31 +88,32 @@ class HudObjects:
         self._spawn_label.x = self.width / 2
         self._spawn_label.y = self.height - 25
         return self._spawn_label
-
     @spawn.setter
     def spawn(self, spawn):
         self._spawn = spawn
         return self.spawn
 
+
     @property
     def width(self):
         return self.screen_size[0]
-
     @width.setter
     def width(self, value):
         self.screen_size = (value, self.width)
 
+
     @property
     def height(self):
         return self.screen_size[1]
-
     @height.setter
     def height(self):
         self.screen_size = (self.width, value)
 
+
     def on_resize(self, width, height):
         self.screen_size = (width, height)
         self.score
+        self.top_score
         self.spawn
         self.lives
 
