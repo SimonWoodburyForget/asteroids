@@ -45,7 +45,7 @@ class Particle(Sprite):
             self.dead = True
 
 
-class Rocks():
+class Dust():
     '''Particles to be tied with asteroids'''
     def __init__(self, screen_size, batch):
         self.screen_size = screen_size
@@ -53,23 +53,23 @@ class Rocks():
         self.particles = []
 
 
-    def spawn(self, pos, vel, scale, qty=10):
+    def spawn(self, pos, vel, scale, qty=20):
 
         for count in range(qty):
 
-            particle = Particle(img=random.choice(resources.asteroid_particles),
+            particle = Particle(img=resources.asteroid_particles,
                                 batch=self.batch)
 
             # spawn area, scale used to change per size of asteroids
             particle.x = pos[0] - random.random() * 50.0 * scale
             particle.y = pos[1] - random.random() * 50.0 * scale
 
-            # takes the velocity of other object * 2 to get off screen faster
-            particle.velocity_x = vel[0] * random.random() * 2
-            particle.velocity_y = vel[1] * random.random() * 2
+            # takes the velocity of other object * 1.5 to get off screen faster
+            particle.velocity_x = vel[0] * random.random() * 1.5
+            particle.velocity_y = vel[1] * random.random() * 1.5
 
             particle.screen_size = self.screen_size
-            particle.scale = 0.40
+            particle.scale = 1
 
             self.particles.append(particle)
 

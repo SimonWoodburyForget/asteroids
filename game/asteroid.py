@@ -20,11 +20,11 @@ class Asteroid(physicalobject.PhysicalObject):
 
         self.new_particles = []
         if self.dead:
-            self.rocks = particles.Rocks(self.screen_size, self.batch)
+            self.dust = particles.Dust(self.screen_size, self.batch)
             vel = (other_object.velocity_x, other_object.velocity_y)
             pos = (self.x, self.y)
-            self.rocks.spawn(pos, vel, self.scale)
-            self.new_particles.append(self.rocks)
+            self.dust.spawn(pos, vel, self.scale)
+            self.new_particles.append(self.dust)
 
         if self.dead and self.scale > 0.25:
             num_asteroids = random.randint(2, 3)

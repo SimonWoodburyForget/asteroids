@@ -30,8 +30,9 @@ asteroid_images = [pyglet.resource.image(
                                 for i in range(0, 4)]
 center_image(asteroid_images)
 
-asteroid_particles = [pyglet.resource.image(
-                        "asteroid_particle_" + str(i) + ".png")
-                                                for i in range(0, 4)]
+#asteroid_particles = [pyglet.resource.image(
+#                        "asteroid_particle_" + str(i) + ".png")
+#                                                for i in range(0, 4)]
+asteroid_particles = pyglet.resource.image('asteroid_particle.png')
 
 explosion_sound = pyglet.resource.media("explosion.wav", streaming=False)

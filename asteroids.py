@@ -48,8 +48,6 @@ class GameWindow(pyglet.window.Window):
         self.hud = guiobject.HudObjects(self.screen_size, self.gui_batch)
         self.push_handlers(self.hud)
 
-        self.explosion_sound = explosion_sound
-
         self.game_over = guiobject.Selection(
             'GameOver',
             self.screen_size,
@@ -66,8 +64,6 @@ class GameWindow(pyglet.window.Window):
         self.menu.insert('Exit', exit)
         self.push_handlers(self.menu)
 
-        self.lives = 4
-        self.player_lives = []
         #self.player_lives = load.player_lives(self.lives, self.gui_batch)
 
         self.game_batch = pyglet.graphics.Batch()
@@ -105,7 +101,11 @@ class GameWindow(pyglet.window.Window):
         self.event_stack_size += len([self.push_handlers(x) for x in asteroids])
 
         self.physical_objects += asteroids
-        self.spawn_condition = 1
+
+        if self._spawn <= 2:
+            self.spawn_condition = num_asteroids
+        elif self._spawn >= 3:
+            self.spawn_condition = num_asteroids -1
 
 
     def reset_game(self):
@@ -120,7 +120,7 @@ class GameWindow(pyglet.window.Window):
 
         self.spawn_condition = 3
         self.asteroids_remaining = 0
-        self._lives = 3
+        self._lives = 4
         self._score = 0
         self._spawn = 0
 
@@ -193,7 +193,7 @@ class GameWindow(pyglet.window.Window):
                 to_remove.delete()
                 self.physical_objects.remove(to_remove)
                 if not isinstance(to_remove, Bullet):
-                    self.explosion_sound.play()
+                    explosion_sound.play()
 
             """Adding requested objects"""
             self.physical_objects.extend(to_add)
