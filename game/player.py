@@ -23,16 +23,17 @@ class Player(physicalobject.PhysicalObject):
         self.engine_player.volume = 0
         self.engine_player.eos_action = pyglet.media.Player.EOS_LOOP
 
-
         self.invul_sprite = Sprite(img=resources.shield_image, *args, **kwargs)
         self.invul_sprite.scale += 1.15
         self.invul_sprite.visible = False
         self.shield_sound = resources.shield_sound
 
 
+        # vector mechanics
         self.thrust = 100.0
         self.recoil = 200.0
 
+        # rotational mechanics
         self.max_rotation = 250
         self.rotation_speed = 0
         self.rotation_force = 2.0
@@ -65,7 +66,7 @@ class Player(physicalobject.PhysicalObject):
 
         elif not self.key_handler[key.RIGHT]:
             # slow down
-            if self.rotation_speed < -0.01:
+            if self.rotation_speed < 0.0:
                 self.rotation_speed += self.rotation_resistance * dt
 
         if self.key_handler[key.RIGHT]:
@@ -79,12 +80,11 @@ class Player(physicalobject.PhysicalObject):
 
         elif not self.key_handler[key.LEFT]:
             # slow down
-            if self.rotation_speed > 0.01:
+            if self.rotation_speed > 0.0:
                 self.rotation_speed -= self.rotation_resistance * dt
 
+        # rotate ship
         self.rotation += self.rotation_speed
-
-
 
 
         if self.key_handler[key.UP]:
