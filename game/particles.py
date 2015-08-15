@@ -53,7 +53,7 @@ class Dust():
         self.particles = []
 
 
-    def spawn(self, pos, vel, scale, qty=20):
+    def spawn(self, pos, vel, scale, qty=10):
 
         for count in range(qty):
 

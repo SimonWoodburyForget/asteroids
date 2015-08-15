@@ -34,7 +34,6 @@ def main():
     pyglet.clock.schedule_interval(game.update, 1/FPS)
     pyglet.app.run()
 
-
 class GameWindow(pyglet.window.Window):
 
     def __init__(self, *args, **kwargs):
@@ -54,7 +53,7 @@ class GameWindow(pyglet.window.Window):
             self.screen_size,
             batch=self.gui_batch)
         self.game_over.insert('Restart', self.reset_game)
-        self.game_over.insert('Exit', exit)
+        self.game_over.insert('Exit', self.exit_game)
         self.push_handlers(self.game_over)
 
         self.menu = guiobject.Selection(
@@ -62,7 +61,7 @@ class GameWindow(pyglet.window.Window):
             self.screen_size,
             batch=self.gui_batch)
         self.menu.insert('Restart', self.reset_game)
-        self.menu.insert('Exit', exit)
+        self.menu.insert('Exit', self.exit_game)
         self.push_handlers(self.menu)
 
         #self.player_lives = load.player_lives(self.lives, self.gui_batch)
@@ -150,6 +149,11 @@ class GameWindow(pyglet.window.Window):
             for handler in obj.event_handlers:
                 self.push_handlers(handler)
                 self.event_stack_size += 1
+
+    def exit_game(self):
+        load.scores(self._score)
+        exit()
+    
 
     def update(self, dt):
 
