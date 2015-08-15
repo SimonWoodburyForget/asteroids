@@ -55,37 +55,41 @@ class Player(physicalobject.PhysicalObject):
     def update(self, dt):
         super().update(dt)
 
-        if self.key_handler[key.LEFT]:
-            # speed up
-            if self.rotation > -self.max_rotation:
-                self.rotation_speed -= self.rotation_force * dt
 
-            # prevents number overflow
-            if self.rotation < -360:
-                self.rotation += 360
+        right = self.key_handler[key.RIGHT]
+        left = self.key_handler[key.LEFT]
 
-        elif not self.key_handler[key.RIGHT]:
-            # slow down
+        def _apply_resistance(modifier=0):
+            #if 0.1 > self.rotation_speed < -0.1:
+            #    self.rotation_speed = 0.0
+
             if self.rotation_speed < 0.0:
-                self.rotation_speed += self.rotation_resistance * dt
-
-        if self.key_handler[key.RIGHT]:
-            # speed up
-            if self.rotation < self.max_rotation:
-                self.rotation_speed += self.rotation_force * dt
-
-            # prevents number overflow
-            if self.rotation > 360:
-                self.rotation -= 360
-
-        elif not self.key_handler[key.LEFT]:
-            # slow down
+                self.rotation_speed += (modifier + self.rotation_resistance) * dt
             if self.rotation_speed > 0.0:
-                self.rotation_speed -= self.rotation_resistance * dt
+                self.rotation_speed -= (modifier + self.rotation_resistance) * dt
+
+        if left and right:
+            modifier = self.rotation_force
+            _apply_resistance(modifier/2)
+
+        elif right:
+            self.rotation_speed += self.rotation_force * dt
+
+        elif left:
+            self.rotation_speed -= self.rotation_force * dt
+        
+        else:
+            _apply_resistance()
+
+
+        if self.rotation > -360:
+            self.rotation += 360
+        elif self.rotation < 360:
+            self.rotation -= 360
+
 
         # rotate ship
         self.rotation += self.rotation_speed
-
 
         if self.key_handler[key.UP]:
             angle_radians = -math.radians(self.rotation)
