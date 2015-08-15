@@ -129,6 +129,9 @@ class Selection(Sprite):
         self.name = name
         self.visible = False
 
+        # called when set visible
+        self._auto_calls = []
+
         self.names = []
         self.buttons = []
         self.calls = []
@@ -140,6 +143,10 @@ class Selection(Sprite):
             group=OrderedGroup(1)
         )
         self._position_name
+
+    def auto_call(self, call):
+        '''Originally made to save the game on game over and menu open'''
+        self._auto_calls.append(call)
 
     def on_resize(self, width, height):
         self.x = width/2
@@ -174,9 +181,14 @@ class Selection(Sprite):
 
 
     def set_visible(self):
-        self.visible = True
-        self.name_label.text = self.name
-        self._reload_buttons()
+        if not self.visible: # game window seems to call this on repeat,
+                             # temporary fix to avoid saving score over it self.
+
+            for call in self._auto_calls:
+                call()
+            self.visible = True
+            self.name_label.text = self.name
+            self._reload_buttons()
 
     def set_invisible(self):
         self.visible = False
