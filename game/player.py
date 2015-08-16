@@ -13,7 +13,8 @@ class Player(physicalobject.PhysicalObject):
     """Physical player object"""
     def __init__(self,*args, **kwargs):
         super().__init__(img=resources.player_image, *args, **kwargs)
-        del kwargs['screen_size']
+        del kwargs['screen_size'] # remove screen_size for sprite usage
+
         self.engine_sprite = Sprite(img=resources.engine_image, *args, **kwargs)
         self.engine_sprite.visible = False
 

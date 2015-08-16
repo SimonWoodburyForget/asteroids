@@ -7,7 +7,9 @@ class PhysicalObject(Sprite):
 
     This object has velocity, rotation speed, will check for screen bounts to
     warp around once it goes off screen, is able to create new particles and
-    objects by simple appending the objects to it's lists"""
+    objects by simple appending the objects to it's lists
+
+    Inherited by Player, Asteroid and Bullet"""
     def __init__(self, screen_size, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.screen_size = screen_size

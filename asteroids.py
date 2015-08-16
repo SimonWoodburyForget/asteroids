@@ -36,7 +36,7 @@ def main():
 
 
 class GameWindow(pyglet.window.Window):
-
+    
     def __init__(self, *args, **kwargs):
         # load and set default config here
         super().__init__(*args, **kwargs)
