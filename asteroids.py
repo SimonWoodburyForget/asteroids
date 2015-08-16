@@ -36,7 +36,7 @@ def main():
 
 
 class GameWindow(pyglet.window.Window):
-
+    
     def __init__(self, *args, **kwargs):
         # load and set default config here
         super().__init__(*args, **kwargs)
@@ -72,10 +72,7 @@ class GameWindow(pyglet.window.Window):
 
         self.game_batch = pyglet.graphics.Batch()
         self.physical_objects = []
-        self.event_stack_size = 0
-
-
-
+        self._event_stack_size = 0
 
         self.reset_game()
 
@@ -89,31 +86,6 @@ class GameWindow(pyglet.window.Window):
         self.gui_batch.draw()
 
 
-    def next_spawn(self):
-        """spawn next wave adding dificulty and keeping the game going"""
-        self._spawn += 1
-        self.hud.spawn = self._spawn
-
-        # lets use fibonacci
-        a, b = 0, 1
-        for i in range(0, self._spawn):
-            a, b = b, a + b
-        num_asteroids = a
-
-        asteroids = load.asteroids(
-            num_asteroids,
-            self.player_ship.position,
-            (self.width, self.height),
-            batch=self.game_batch)
-        self.event_stack_size += len([self.push_handlers(x) for x in asteroids])
-
-        self.physical_objects += asteroids
-
-        if self._spawn <= 2:
-            self.spawn_condition = num_asteroids
-        elif self._spawn >= 3:
-            self.spawn_condition = num_asteroids -1
-
 
     def reset_game(self):
 
@@ -122,9 +94,9 @@ class GameWindow(pyglet.window.Window):
         self.hud.top_score = self._top_score
 
         # destroy gane objects
-        while self.event_stack_size > 0:
+        while self._event_stack_size > 0:
             self.pop_handlers()
-            self.event_stack_size -= 1
+            self._event_stack_size -= 1
 
         for obj in self.physical_objects:
             obj.delete()
@@ -145,7 +117,7 @@ class GameWindow(pyglet.window.Window):
 
         self.player_ship = player.Player(
             screen_size=(self.width,
-                        self.height),
+                         self.height),
             x=self.width/2,
             y=self.height/2,
             batch=self.game_batch
@@ -155,12 +127,34 @@ class GameWindow(pyglet.window.Window):
         for obj in self.physical_objects:
             for handler in obj.event_handlers:
                 self.push_handlers(handler)
-                self.event_stack_size += 1
+                self._event_stack_size += 1
 
-    def exit_game(self):
-        self.save_score()
-        exit()
-    
+    def next_spawn(self):
+        """spawn next wave adding dificulty and keeping the game going"""
+        self._spawn += 1
+        self.hud.spawn = self._spawn
+
+        # lets use fibonacci
+        a, b = 0, 1
+        for i in range(0, self._spawn):
+            a, b = b, a + b
+        num_asteroids = a
+
+        asteroids = load.asteroids(
+            num_asteroids,
+            self.player_ship.position,
+            (self.width, self.height),
+            batch=self.game_batch)
+        self._event_stack_size += len([self.push_handlers(x) for x in asteroids])
+
+        self.physical_objects += asteroids
+
+
+        self.spawn_condition 
+        if self._spawn <= 2:
+            self.spawn_condition = num_asteroids
+        elif self._spawn >= 3:
+            self.spawn_condition = num_asteroids -1
 
     def update(self, dt):
 
@@ -176,10 +170,6 @@ class GameWindow(pyglet.window.Window):
                         if obj_1.collides_with(obj_2):
                             obj_1.handle_collision_with(obj_2)
                             obj_2.handle_collision_with(obj_1)
-
-            """Spawning more asteroids"""
-            if self.asteroids_remaining < self.spawn_condition:
-                self.next_spawn()
 
             """Checking requests to_add objects"""
             to_add = []
@@ -203,8 +193,8 @@ class GameWindow(pyglet.window.Window):
 
             """Removing requested to_remove objects"""
             for to_remove in [obj for obj
-                                in self.physical_objects
-                                if obj.dead]:
+                                  in self.physical_objects
+                                  if obj.dead]:
                 """Calculating Score (in/de)crement"""
                 self._score += to_remove.score_dif
                 self.hud.score = self._score
@@ -221,25 +211,21 @@ class GameWindow(pyglet.window.Window):
             """Adding requested objects"""
             self.physical_objects.extend(to_add)
 
-
-            """Spawn conditions"""
-            self.asteroids_remaining = 0
-
             """Updating physical objects"""
+            self.asteroids_remaining = 0
             for obj in self.physical_objects:
                 obj.update(dt)
 
-                """Checking for spawn conditions"""
+                """Counting asteroids"""
                 if isinstance(obj, Asteroid):
                     self.asteroids_remaining += 1
 
+            """Spawning more asteroids"""
+            if self.asteroids_remaining < self.spawn_condition:
+                self.next_spawn()
+
             for part in self.particles:
                 part.update(dt)
-
-
-    def save_score(self):
-        load.scores(self._score)
-
 
 
     def on_key_press(self, symbol, modifiers):
@@ -254,6 +240,13 @@ class GameWindow(pyglet.window.Window):
                     self.game_over.set_invisible()
                 self.menu.set_visible()
                 return True
+
+    def exit_game(self):
+        self.save_score()
+        exit()
+
+    def save_score(self):
+        load.scores(self._score)
 
 
 
