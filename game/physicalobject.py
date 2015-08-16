@@ -36,11 +36,8 @@ class PhysicalObject(Sprite):
         self.y += self.velocity_y * dt
         self.check_bounds()
 
-    def on_resize(self, width, height):
-        self.screen_size = (width, height)
-        self.check_bounds()
-
     def check_bounds(self):
+        """Physical objects will wrap around the screen"""
         min_x = -self.image.width/2
         min_y = -self.image.height/2
 
@@ -84,3 +81,8 @@ class PhysicalObject(Sprite):
             # Simulates momentum
             self.velocity_x += other_object.velocity_x/25
             self.velocity_y -= other_object.velocity_y/25
+
+    """event handled by pushing it to the window object"""
+    def on_resize(self, width, height):
+        self.screen_size = (width, height)
+        self.check_bounds()

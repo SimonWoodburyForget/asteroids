@@ -34,6 +34,7 @@ class Particle(Sprite):
         if self.life_time < 0: self.dead = True
 
     def check_bounds(self):
+        """Particles will be killed off screen"""
         min_x = -self.image.width/2
         min_y = -self.image.height/2
 
