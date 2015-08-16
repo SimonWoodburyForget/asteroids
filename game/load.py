@@ -56,9 +56,11 @@ def scores(score=None):
 
     Doesn't save score if 0
     """
-
-    with open('./data/score.json', 'r') as stream:
-        score_data = json.load(stream)
+    try:
+        with open('./data/score.json', 'r') as stream:
+            score_data = json.load(stream)
+    except:
+        score_data = None
 
     if score not in (0, None):
         # adding score
