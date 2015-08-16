@@ -171,7 +171,6 @@ class GameWindow(pyglet.window.Window):
                             obj_1.handle_collision_with(obj_2)
                             obj_2.handle_collision_with(obj_1)
 
-
             """Checking requests to_add objects"""
             to_add = []
             for obj in self.physical_objects:

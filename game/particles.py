@@ -7,8 +7,13 @@ from . import resources
 import pyglet
 
 
+# No exact idea of the efficiency of using sprites here.
 class Particle(Sprite):
-    '''Base class for a particle'''
+    """Basic particle object, used for small objects that don't
+    require any physical interaction
+
+    This object will have velocity, rotation speed, and a certain random
+    life time, will check for screen bounts to die off screen"""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.velovity_x = 0
@@ -29,7 +34,6 @@ class Particle(Sprite):
         if self.life_time < 0: self.dead = True
 
     def check_bounds(self):
-        '''Making particle die off screen'''
         min_x = -self.image.width/2
         min_y = -self.image.height/2
 
