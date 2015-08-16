@@ -25,9 +25,7 @@ class Player(physicalobject.PhysicalObject):
         self.engine_player.volume = 0
         self.engine_player.eos_action = pyglet.media.Player.EOS_LOOP
 
-        self.invul_sprite = Shield()
-        self.invul_sprite.scale += 1.15
-        self.invul_sprite.visible = False
+        self.shield = shield.Shield(self.batch)
         self.shield_sound = resources.shield_sound
 
 
@@ -62,9 +60,7 @@ class Player(physicalobject.PhysicalObject):
         left = self.key_handler[key.LEFT]
 
         def _apply_resistance(modifier=0):
-            #if 0.1 > self.rotation_speed < -0.1:
-            #    self.rotation_speed = 0.0
-
+            """Slows down ship rotation"""
             if self.rotation_speed < 0.0:
                 self.rotation_speed += (modifier + self.rotation_resistance) * dt
             if self.rotation_speed > 0.0:
@@ -105,7 +101,7 @@ class Player(physicalobject.PhysicalObject):
             self.engine_sprite.y = self.y
             self.engine_sprite.visible = True
 
-            # smooth sound==
+            # smooth sound ==
             self.engine_player.play()
             if self.engine_player.volume < 1.8:
                 self.engine_player.volume += 1.2 * dt
@@ -115,29 +111,36 @@ class Player(physicalobject.PhysicalObject):
                 self.engine_player.volume -= 1.5 * dt
             else:
                 self.engine_player.pause()
-            # ==============
+            # ===============
+
 
 
         if self.invulnerable:
-            self.invul_sprite.x = self.x
-            self.invul_sprite.y = self.y
-            self.invul_sprite.visible = True
+            self.shield.up = True
         else:
-            self.invul_sprite.visible = False
+            self.shield.up = False
+
+        self.shield.x = self.x
+        self.shield.y = self.y
+        self.shield.update(dt)
+
 
         if self.key_handler[key.SPACE]:
             # fires has long has space is held
             self.fire(dt)
 
-    def set_invulnerable(self, t=5):
-        self.shield_sound.play()
-        #self.shield.up()
-        self.invulnerable = True
-        pyglet.clock.schedule_once(self.set_vulnerable, t)
 
-    def set_vulnerable(self, t):
+    """Methods that control shield invulnerability
+    Can take 1 argument, deltatime(dt), invulnerability leght"""
+    def set_invulnerable(self, dt=5.0):
+        self.shield_sound.play()
+        self.invulnerable = True
+
+        # time to vulnerable
+        pyglet.clock.schedule_once(self.set_vulnerable, dt)
+    def set_vulnerable(self, dt):
         self.invulnerable = False
-        #self.shield.down()
+
 
     def fire(self, dt):
         # fires only if loaded
