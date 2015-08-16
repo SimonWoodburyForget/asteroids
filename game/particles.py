@@ -20,7 +20,7 @@ class Particle(Sprite):
         self.velocity_y = 0
         self.rotation_speed = random.random() * 70
 
-        # seconds
+        # seconds to particle to die, will randomly die off over ~1 minute
         self.life_time = random.random() * 25
         self.dead = False
 
@@ -50,7 +50,7 @@ class Particle(Sprite):
 
 
 class Dust():
-    '''Particles to be tied with asteroids'''
+    """Particles wrapper, will manage all particles"""
     def __init__(self, screen_size, batch):
         self.screen_size = screen_size
         self.batch = batch
@@ -58,7 +58,15 @@ class Dust():
 
 
     def spawn(self, pos, vel, scale, qty=10):
+        """Spawns particles,
+            pos = spawn position
+            vel = velocity of particles
+            scale = size of particles
+            qty = amount of particles
 
+        Particles will spawn in a random area around the position
+        then will diviate a random amount of velocity from each other.
+        """
         for count in range(qty):
 
             particle = Particle(img=resources.asteroid_particles,
@@ -79,6 +87,7 @@ class Dust():
 
 
     def update(self, dt):
+        """Used to update the position of every particle"""
         to_remove = []
         for particle in self.particles:
             particle.update(dt)
