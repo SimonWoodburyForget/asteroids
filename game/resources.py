@@ -20,7 +20,7 @@ engine_image.anchor_y = engine_image.height / 2
 shield_sound = pyglet.resource.media("energy_wip.wav", streaming=False)
 shield_images = [pyglet.resource.image(
 					"shield" + str(i) + ".png")
-							   for i in range(0, 7)]
+							   for i in range(0, 10)]
 center_image(shield_images)
 
 bullet_sound = pyglet.resource.media("bullet.wav", streaming=False)

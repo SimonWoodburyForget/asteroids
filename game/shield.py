@@ -20,11 +20,10 @@ class Shield:
         self.counter = .0
 
         self.up = False
-        self.frame = self._frames[0]
+        self.frame = self._frames[-1]
 
         self.x = 0
         self.y = 0
-
 
 
     def update(self, dt):
@@ -33,17 +32,22 @@ class Shield:
         if self.counter >= self.frames_delta:
             self.counter = .0
 
+            self.frame.visible = False
             if self.up and self._frame < len(self._frames) - 1 :
-                self.frame.visible = False
                 self._frame += 1
 
-            elif not self.up and not self._frame > -1:
-                self.frame.visible = False
+            elif not self.up and self._frame > 0:
                 self._frame -= 1
-
+            
             self.frame = self._frames[self._frame]
             self.frame.visible = True
 
         self.frame.x = self.x
         self.frame.y = self.y
+
+
+    def delete(self):
+        for sprite in self._frames:
+            sprite.delete()
+
 

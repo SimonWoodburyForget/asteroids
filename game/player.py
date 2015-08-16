@@ -182,7 +182,7 @@ class Player(physicalobject.PhysicalObject):
     #        self.fire()
 
     def delete(self):
+        self.shield.delete()
         self.engine_sprite.delete()
         self.engine_player.delete()
-        self.invul_sprite.delete()
         super().delete()
