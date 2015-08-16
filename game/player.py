@@ -8,6 +8,7 @@ from pyglet.sprite import Sprite
 from . import resources
 from . import physicalobject
 from . import bullet
+from . import shield
 
 class Player(physicalobject.PhysicalObject):
     """Physical player object"""
@@ -24,7 +25,7 @@ class Player(physicalobject.PhysicalObject):
         self.engine_player.volume = 0
         self.engine_player.eos_action = pyglet.media.Player.EOS_LOOP
 
-        self.invul_sprite = Sprite(img=resources.shield_image, *args, **kwargs)
+        self.invul_sprite = Shield()
         self.invul_sprite.scale += 1.15
         self.invul_sprite.visible = False
         self.shield_sound = resources.shield_sound
@@ -130,11 +131,13 @@ class Player(physicalobject.PhysicalObject):
 
     def set_invulnerable(self, t=5):
         self.shield_sound.play()
+        #self.shield.up()
         self.invulnerable = True
         pyglet.clock.schedule_once(self.set_vulnerable, t)
 
     def set_vulnerable(self, t):
         self.invulnerable = False
+        #self.shield.down()
 
     def fire(self, dt):
         # fires only if loaded

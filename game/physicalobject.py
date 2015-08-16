@@ -30,10 +30,11 @@ class PhysicalObject(Sprite):
         # to be updated by it's wrapper class
         self.new_particles = []
 
-        # lists of handlers to be pushed to the window object
+        # lists of key handlers to be pushed to the window object
         self.event_handlers = []
 
     def update(self, dt):
+        """updates object position"""
         self.x += self.velocity_x * dt
         self.y += self.velocity_y * dt
         self.check_bounds()
