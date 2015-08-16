@@ -16,7 +16,7 @@ class Shield:
 
         self._frame = 0
         
-        self.frames_delta = 0.5
+        self.frames_delta = 0.1
         self.counter = .0
 
         self.up = False
@@ -26,24 +26,23 @@ class Shield:
         self.y = 0
 
 
-    def update(self, dt):        
-        if True:
-            self.counter += dt
 
-            if self.counter >= self.frames_delta:
-                self.counter = .0
+    def update(self, dt):
+        self.counter += dt
 
-                if self.up and self._frame < len(self._frames)-1:
-                    self.frame.visible = False
-                    self._frame += 1
+        if self.counter >= self.frames_delta:
+            self.counter = .0
 
-                elif not self.up and self._frame >= 0:
-                    self.frame.visible = False
-                    self._frame -= 1
-                else:
-                    return None
-                self.frame = self._frames[self._frame]
-                self.frame.visible = True
+            if self.up and self._frame < len(self._frames) - 1 :
+                self.frame.visible = False
+                self._frame += 1
+
+            elif not self.up and not self._frame > -1:
+                self.frame.visible = False
+                self._frame -= 1
+
+            self.frame = self._frames[self._frame]
+            self.frame.visible = True
 
         self.frame.x = self.x
         self.frame.y = self.y
