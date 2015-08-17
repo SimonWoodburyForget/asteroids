@@ -8,12 +8,14 @@ from pyglet.sprite import Sprite
 from . import resources
 from . import physicalobject
 from . import bullet
+from . import shield
 
 class Player(physicalobject.PhysicalObject):
     """Physical player object"""
     def __init__(self,*args, **kwargs):
         super().__init__(img=resources.player_image, *args, **kwargs)
-        del kwargs['screen_size']
+        del kwargs['screen_size'] # remove screen_size for sprite usage
+
         self.engine_sprite = Sprite(img=resources.engine_image, *args, **kwargs)
         self.engine_sprite.visible = False
 
@@ -23,16 +25,19 @@ class Player(physicalobject.PhysicalObject):
         self.engine_player.volume = 0
         self.engine_player.eos_action = pyglet.media.Player.EOS_LOOP
 
-
-        self.invul_sprite = Sprite(img=resources.shield_image, *args, **kwargs)
-        self.invul_sprite.scale += 1.15
-        self.invul_sprite.visible = False
+        self.shield = shield.Shield(self.batch)
         self.shield_sound = resources.shield_sound
 
 
+        # vector mechanics
         self.thrust = 100.0
-        self.recoil = 100.0
-        self.rotation_speed = 100.0
+        self.recoil = 200.0
+
+        # rotational mechanics
+        self.max_rotation = 250
+        self.rotation_speed = 0
+        self.rotation_force = 2.0
+        self.rotation_resistance = 2.5
 
         self.ship_radius = self.image.width/2
 
@@ -50,16 +55,39 @@ class Player(physicalobject.PhysicalObject):
     def update(self, dt):
         super().update(dt)
 
-        if self.key_handler[key.LEFT]:
-            self.rotation -= self.rotation_speed * dt
-            if self.rotation < -360:
-                self.rotation += 360
 
-        if self.key_handler[key.RIGHT]:
-            self.rotation += self.rotation_speed * dt
-            if self.rotation > 360:
-                self.rotation -= 360
+        right = self.key_handler[key.RIGHT]
+        left = self.key_handler[key.LEFT]
 
+        def _apply_resistance(modifier=0):
+            """Slows down ship rotation"""
+            if self.rotation_speed < 0.0:
+                self.rotation_speed += (modifier + self.rotation_resistance) * dt
+            if self.rotation_speed > 0.0:
+                self.rotation_speed -= (modifier + self.rotation_resistance) * dt
+
+        if left and right:
+            modifier = self.rotation_force
+            _apply_resistance(modifier/2)
+
+        elif right:
+            self.rotation_speed += self.rotation_force * dt
+
+        elif left:
+            self.rotation_speed -= self.rotation_force * dt
+        
+        else:
+            _apply_resistance()
+
+
+        if self.rotation > -360:
+            self.rotation += 360
+        elif self.rotation < 360:
+            self.rotation -= 360
+
+
+        # rotate ship
+        self.rotation += self.rotation_speed
 
         if self.key_handler[key.UP]:
             angle_radians = -math.radians(self.rotation)
@@ -73,9 +101,9 @@ class Player(physicalobject.PhysicalObject):
             self.engine_sprite.y = self.y
             self.engine_sprite.visible = True
 
-            # engine sound fading mechanic
+            # smooth sound ==
             self.engine_player.play()
-            if self.engine_player.volume < 1.5:
+            if self.engine_player.volume < 1.8:
                 self.engine_player.volume += 1.2 * dt
         else:
             self.engine_sprite.visible = False
@@ -83,26 +111,36 @@ class Player(physicalobject.PhysicalObject):
                 self.engine_player.volume -= 1.5 * dt
             else:
                 self.engine_player.pause()
+            # ===============
+
 
 
         if self.invulnerable:
-            self.invul_sprite.x = self.x
-            self.invul_sprite.y = self.y
-            self.invul_sprite.visible = True
+            self.shield.up = True
         else:
-            self.invul_sprite.visible = False
+            self.shield.up = False
+
+        self.shield.x = self.x
+        self.shield.y = self.y
+        self.shield.update(dt)
+
 
         if self.key_handler[key.SPACE]:
             # fires has long has space is held
             self.fire(dt)
 
-    def set_invulnerable(self, t=5):
+
+    """Methods that control shield invulnerability
+    Can take 1 argument, deltatime(dt), invulnerability leght"""
+    def set_invulnerable(self, dt=5.0):
         self.shield_sound.play()
         self.invulnerable = True
-        pyglet.clock.schedule_once(self.set_vulnerable, t)
 
-    def set_vulnerable(self, t):
+        # time to vulnerable
+        pyglet.clock.schedule_once(self.set_vulnerable, dt)
+    def set_vulnerable(self, dt):
         self.invulnerable = False
+
 
     def fire(self, dt):
         # fires only if loaded
@@ -144,7 +182,7 @@ class Player(physicalobject.PhysicalObject):
     #        self.fire()
 
     def delete(self):
+        self.shield.delete()
         self.engine_sprite.delete()
         self.engine_player.delete()
-        self.invul_sprite.delete()
         super().delete()

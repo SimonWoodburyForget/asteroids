@@ -7,15 +7,20 @@ from . import resources
 import pyglet
 
 
+# No exact idea of the efficiency of using sprites here.
 class Particle(Sprite):
-    '''Base class for a particle'''
+    """Basic particle object, used for small objects that don't
+    require any physical interaction
+
+    This object will have velocity, rotation speed, and a certain random
+    life time, will check for screen bounts to die off screen"""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.velovity_x = 0
         self.velocity_y = 0
         self.rotation_speed = random.random() * 70
 
-        # seconds
+        # seconds to particle to die, will randomly die off over ~1 minute
         self.life_time = random.random() * 25
         self.dead = False
 
@@ -29,7 +34,7 @@ class Particle(Sprite):
         if self.life_time < 0: self.dead = True
 
     def check_bounds(self):
-        '''Making particle die off screen'''
+        """Particles will be killed off screen"""
         min_x = -self.image.width/2
         min_y = -self.image.height/2
 
@@ -45,8 +50,8 @@ class Particle(Sprite):
             self.dead = True
 
 
-class Rocks():
-    '''Particles to be tied with asteroids'''
+class Dust():
+    """Particles wrapper, will manage all particles"""
     def __init__(self, screen_size, batch):
         self.screen_size = screen_size
         self.batch = batch
@@ -54,27 +59,36 @@ class Rocks():
 
 
     def spawn(self, pos, vel, scale, qty=10):
+        """Spawns particles,
+            pos = spawn position
+            vel = velocity of particles
+            scale = size of particles
+            qty = amount of particles
 
+        Particles will spawn in a random area around the position
+        then will diviate a random amount of velocity from each other.
+        """
         for count in range(qty):
 
-            particle = Particle(img=random.choice(resources.asteroid_particles),
+            particle = Particle(img=resources.asteroid_particles,
                                 batch=self.batch)
 
             # spawn area, scale used to change per size of asteroids
             particle.x = pos[0] - random.random() * 50.0 * scale
             particle.y = pos[1] - random.random() * 50.0 * scale
 
-            # takes the velocity of other object * 2 to get off screen faster
-            particle.velocity_x = vel[0] * random.random() * 2
-            particle.velocity_y = vel[1] * random.random() * 2
+            # takes the velocity of other object * 1.5 to get off screen faster
+            particle.velocity_x = vel[0] * random.random() * 1.5
+            particle.velocity_y = vel[1] * random.random() * 1.5
 
             particle.screen_size = self.screen_size
-            particle.scale = 0.40
+            particle.scale = 1
 
             self.particles.append(particle)
 
 
     def update(self, dt):
+        """Used to update the position of every particle"""
         to_remove = []
         for particle in self.particles:
             particle.update(dt)
