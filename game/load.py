@@ -2,6 +2,7 @@ import random
 import math
 import json
 import time
+import os
 
 import pyglet
 from pyglet.graphics import OrderedGroup
@@ -56,6 +57,10 @@ def scores(score=None):
 
     Doesn't save score if 0
     """
+    if not os.path.exists('./data'):
+        os.makedirs('./data')
+
+
     try:
         with open('./data/score.json', 'r') as stream:
             score_data = json.load(stream)
